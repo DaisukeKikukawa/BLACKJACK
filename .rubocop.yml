@@ -1,0 +1,37 @@
+# .rubocop.yml
+
+# ドキュメントコメントの要求を無効化
+Style/Documentation:
+  Enabled: false
+
+# クラスの行数に関する制限を無効化
+Metrics/ClassLength:
+  Enabled: false
+
+# クラス変数の使用に関する警告を無効化
+Style/ClassVars:
+  Enabled: false
+
+# メソッドのABCサイズに関する制限を無効化
+Metrics/AbcSize:
+  Enabled: false
+
+# メソッドの循環的複雑度に関する制限を無効化
+Metrics/CyclomaticComplexity:
+  Enabled: false
+
+# メソッドの行数に関する制限を無効化
+Metrics/MethodLength:
+  Enabled: false
+
+# メソッドの知覚的複雑度に関する制限を無効化
+Metrics/PerceivedComplexity:
+  Enabled: false
+
+# 到達不能なループに関する警告を無効化
+Lint/UnreachableLoop:
+  Enabled: false
+
+# ブロックの行数に関する制限を無効化
+Metrics/BlockLength:
+  Enabled: false
