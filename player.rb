@@ -18,3 +18,7 @@ class Player
     return card_content
   end
 end
+
+
+
+
