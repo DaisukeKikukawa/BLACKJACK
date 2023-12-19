@@ -1,8 +1,17 @@
 class Player
+  @@players = []
   attr_accessor :name,:player_point
   def initialize(name)
     @name = name
     @player_point = 0
+  end
+
+  class << self
+    def create(number_of_player_input)
+      number_of_player_input.times do |i|
+       @@players << Player.new("player#{i}")
+      end
+    end
   end
 
   def player_draw_card(deck)
