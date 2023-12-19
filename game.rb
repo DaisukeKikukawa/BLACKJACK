@@ -44,8 +44,21 @@ class Game
       end
     end
 
+    def choose_player_number
+        puts "プレーヤーの人数を決めて下さい"
+        number_of_player_input = gets.to_i
+        Student.create(number_of_player_input)
+    end
+
     # ゲーム実行開始メソッド
     def game_start(player1,dealer)
+      # プレーヤーの人数を決めるメソッド呼び出し
+      choose_player_number
+      # playerクラス側でクラス変数にプレーヤー分の配列ができるため、それを使えばよい
+      @@player.length.each do |i|
+        # この中でやればよい？
+      end
+      
       first_turn = true  # 1ターン目の判定をするフラグ
       game_over = false  # 外側のループを制御するためのフラグ
       while true do
