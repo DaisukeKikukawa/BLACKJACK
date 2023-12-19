@@ -55,7 +55,7 @@ class Game
       # プレーヤーの人数を決めるメソッド呼び出し
       choose_player_number
       # playerクラス側でクラス変数にプレーヤー分の配列ができるため、それを使えばよい
-      @@player.length.each do |i|
+      @@player.each do |i|
         # この中でやればよい？
       end
       
