@@ -1,3 +1,5 @@
+require './player.rb'
+
 class Game
   @@deck = {
     'ハート' => ["A", 2, 3, 4, 5, 6, 7, 8, 9, 10, "J", "Q", "K"],
@@ -53,12 +55,8 @@ class Game
     # ゲーム実行開始メソッド
     def game_start(player1,dealer)
       # プレーヤーの人数を決めるメソッド呼び出し
-      choose_player_number
-      # playerクラス側でクラス変数にプレーヤー分の配列ができるため、それを使えばよい
-      @@player.each do |i|
-        # この中でやればよい？
-      end
-      
+      Game.choose_player_number
+
       first_turn = true  # 1ターン目の判定をするフラグ
       game_over = false  # 外側のループを制御するためのフラグ
       while true do
@@ -71,6 +69,23 @@ class Game
           second_player_card = player1.player_draw_card(@@deck)
           player1.player_point += Game.score_calculation(second_player_card[1],player1.player_point)
           puts "あなたの引いたカードは#{second_player_card[0]}の#{second_player_card[1]}です"
+          sleep(1)
+
+          # 追加プレーヤー分の処理ここから
+          Player.players.each_with_index do |player, index|
+            puts "他プレーヤーのターンです"
+            sleep(1)
+            first_player_card = player.player_draw_card(@@deck)
+            player.player_point += Game.score_calculation(first_player_card[1],player.player_point)
+            puts "player#{index + 1}の引いたカードは#{first_player_card[0]}の#{first_player_card[1]}です"
+            sleep(1)
+            second_player_card = player.player_draw_card(@@deck)
+            player.player_point += Game.score_calculation(second_player_card[1],player.player_point)
+            puts "player#{index + 1}の引いたカードは#{second_player_card[0]}の#{second_player_card[1]}です"
+            sleep(1)
+          end
+          # 追加プレーヤー分の処理ここまで
+
           first_dealer_card = dealer.dealer_draw_card(@@deck)
           dealer.dealer_point += Game.score_calculation(first_dealer_card[1],dealer.dealer_point)
           puts "ディーラーの引いたカードは#{first_dealer_card[0]}の#{first_dealer_card[1]}です"
@@ -103,6 +118,15 @@ class Game
 
         break if game_over
 
+        Player.players.each_with_index do |player, index|
+          while player.player_point < 21
+            first_player_card = player.player_draw_card(@@deck)
+            player.player_point += Game.score_calculation(first_player_card[1],player.player_point)
+            puts "player#{index + 1}の引いたカードは#{first_player_card[0]}の#{first_player_card[1]}です"
+            sleep(1)
+          end
+        end
+
         while dealer.dealer_point < 17
           dealer_cards = dealer.dealer_draw_card(@@deck)
           dealer.dealer_point += Game.score_calculation(dealer_cards[1],dealer.dealer_point)
@@ -110,8 +134,15 @@ class Game
         end
 
         puts "あなたの得点は#{player1.player_point}です。"
+        sleep(1)
+        puts "他プレーヤーの得点は"
+        Player.players.each_with_index do |player, index|
+          puts "player#{index + 1}の得点は#{player.player_point}です。"
+        end
         puts "ディーラーの得点は#{dealer.dealer_point}です。"
+        sleep(1)
         determine_winner(player1.player_point,dealer.dealer_point)
+        sleep(1)
         puts "ブラックジャックを終了します"
         break
       end

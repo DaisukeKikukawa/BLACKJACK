@@ -9,8 +9,12 @@ class Player
   class << self
     def create(number_of_player_input)
       number_of_player_input.times do |i|
-       @@players << Player.new("player#{i}")
+        @@players << Player.new("player#{i}")
       end
+    end
+
+    def players
+      @@players
     end
   end
 
@@ -27,7 +31,3 @@ class Player
     return card_content
   end
 end
-
-
-
-
