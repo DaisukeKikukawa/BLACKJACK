@@ -47,7 +47,7 @@ class Game
     def choose_player_number
         puts "プレーヤーの人数を決めて下さい"
         number_of_player_input = gets.to_i
-        Student.create(number_of_player_input)
+        Player.create(number_of_player_input)
     end
 
     # ゲーム実行開始メソッド
