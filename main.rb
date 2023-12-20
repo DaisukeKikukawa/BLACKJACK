@@ -6,5 +6,5 @@ require './dealer'
 
 dealer = Dealer.new('ディーラー')
 # 自分を作成
-player1 = Player.new('プレーヤー1')
-Game.game_start(player1, dealer)
+yourself = Player.new('あなた')
+Game.game_start(yourself, dealer)

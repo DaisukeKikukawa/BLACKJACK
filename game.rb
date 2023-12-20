@@ -17,9 +17,7 @@ class Game
         10
       elsif random_card_number == 'A'
         return 11 if player_or_dealer_point + 11 <= 21
-
         1
-
       else
         random_card_number
       end
@@ -28,20 +26,22 @@ class Game
     # 21を超えたか判断するメソッド
     def check_player_max_point(player_point)
       return true if player_point > 21
-
       false
     end
 
-    # 勝敗を決めるメソッド
-    def determine_winner(player_point, dealer_point)
-      if player_point > 21
-        puts 'ディーラーの勝ちです。'
-      elsif dealer_point > 21
-        puts 'プレイヤーの勝ちです。'
-      elsif player_point == dealer_point
-        puts '引き分けです。'
-      else
-        puts player_point > dealer_point ? 'プレイヤーの勝ちです。' : 'ディーラーの勝ちです。'
+    def determine_winner(dealer)
+      puts "ディーラーの得点は#{dealer.dealer_point}です。"
+
+      Player.players.each do |player|
+        if player.player_point > 21
+          puts "#{player.name}の得点は#{player.player_point}です。負けました。ディーラーの勝ちです"
+        elsif dealer.dealer_point > 21 || player.player_point > dealer.dealer_point
+          puts "#{player.name}の得点は#{player.player_point}です。ディーラーに勝ちました！"
+        elsif player.player_point == dealer.dealer_point
+          puts "#{player.name}の得点は#{player.player_point}です。引き分けです。"
+        else
+          puts "#{player.name}の得点は#{player.player_point}です。負けました。ディーラーの勝ちです"
+        end
       end
     end
 
@@ -51,8 +51,14 @@ class Game
       Player.create(number_of_player_input)
     end
 
+    def your_first_turn(yourself)
+      first_player_card = yourself.player_draw_card(@@deck)
+      yourself.player_point += Game.score_calculation(first_player_card[1], yourself.player_point)
+      puts "#{yourself.name}の引いたカードは#{first_player_card[0]}の#{first_player_card[1]}です"
+    end
+
     # ゲーム実行開始メソッド
-    def game_start(player1, dealer)
+    def game_start(yourself, dealer)
       # プレーヤーの人数を決めるメソッド呼び出し
       Game.choose_player_number
 
@@ -61,13 +67,8 @@ class Game
       loop do
         if first_turn
           puts 'ブラックジャックを開始します。'
-          # first_player_cardに["スート","数字"]の配列がリターンされる
-          first_player_card = player1.player_draw_card(@@deck)
-          player1.player_point += Game.score_calculation(first_player_card[1], player1.player_point)
-          puts "あなたの引いたカードは#{first_player_card[0]}の#{first_player_card[1]}です"
-          second_player_card = player1.player_draw_card(@@deck)
-          player1.player_point += Game.score_calculation(second_player_card[1], player1.player_point)
-          puts "あなたの引いたカードは#{second_player_card[0]}の#{second_player_card[1]}です"
+          your_first_turn(yourself)
+          your_first_turn(yourself)
           sleep(1)
 
           # 追加プレーヤー分の処理ここから
@@ -85,6 +86,7 @@ class Game
           end
           # 追加プレーヤー分の処理ここまで
 
+          # ディーラーの1ターン目
           first_dealer_card = dealer.dealer_draw_card(@@deck)
           dealer.dealer_point += Game.score_calculation(first_dealer_card[1], dealer.dealer_point)
           puts "ディーラーの引いたカードは#{first_dealer_card[0]}の#{first_dealer_card[1]}です"
@@ -95,19 +97,19 @@ class Game
         end
 
         loop do
-          if check_player_max_point(player1.player_point)
+          if check_player_max_point(yourself.player_point)
             puts '21を超えてしまいました。あなたの負けです。'
             game_over = true
             break
           end
 
-          puts "あなたの現在の得点は#{player1.player_point}です。カードを引きますか？（Y/N）"
+          puts "あなたの現在の得点は#{yourself.player_point}です。カードを引きますか？（Y/N）"
           input = gets.chomp
 
           break unless input == 'Y'
 
-          player_cards = player1.player_draw_card(@@deck)
-          player1.player_point += Game.score_calculation(player_cards[1], player1.player_point)
+          player_cards = yourself.player_draw_card(@@deck)
+          yourself.player_point += Game.score_calculation(player_cards[1], yourself.player_point)
           puts "あなたの引いたカードは#{player_cards[0]}の#{player_cards[1]}です"
         end
 
@@ -130,7 +132,7 @@ class Game
           puts "ディーラーの引いたカードは#{dealer_cards[0]}の#{dealer_cards[1]}です"
         end
 
-        puts "あなたの得点は#{player1.player_point}です。"
+        puts "あなたの得点は#{yourself.player_point}です。"
         sleep(1)
         puts '他プレーヤーの得点は'
         Player.players.each_with_index do |player, index|
@@ -138,7 +140,8 @@ class Game
         end
         puts "ディーラーの得点は#{dealer.dealer_point}です。"
         sleep(1)
-        determine_winner(player1.player_point, dealer.dealer_point)
+        Player.add_player(yourself)
+        Game.determine_winner(dealer)
         sleep(1)
         puts 'ブラックジャックを終了します'
         break

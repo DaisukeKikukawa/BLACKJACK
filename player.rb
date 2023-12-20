@@ -19,6 +19,10 @@ class Player
     def players
       @@players
     end
+
+    def add_player(player)
+      @@players << player
+    end
   end
 
   def player_draw_card(deck)
